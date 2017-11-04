@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Page Title</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <canvas></canvas>
+    <script>
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext("2d");
+
+canvas.width = 400;
+canvas.height = 200;
+
+const cw = canvas.width;
+const ch = canvas.height;
+
+const ballSize = 10;
+let ballX = (cw - ballSize)/2;
+let ballY = (ch - ballSize)/2;
+
+const paddleHeight = 50;
+const paddleWidth = 10;
+
+const playerX = 35;
+const aiX = 355;
+
+let playerY = 100;
+let aiY = 100;
+
+const lineWidth = 3;
+const lineHeight = 8;
+
+let ballSpeedX = 1;
+let ballSpeedY = 1;
+
+function player() {
+    ctx.fillStyle = '#7FFF00';
+    ctx.fillRect(playerX, playerY, paddleWidth, paddleHeight);
+    }
+
+function ai() {
+    ctx.fillStyle = 'yellow';
+    ctx.fillRect(aiX, aiY, paddleWidth, paddleHeight);
+    }
+
+function ball() {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(ballX, ballY, ballSize, ballSize);
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
+
+    if (ballY <= 0 || ballY >= ch - ballSize) {
+        ballSpeedY = -ballSpeedY;
+        }
+    if (ballX <= 0 || ballX >= cw - ballSize) {
+        ballSpeedX = - ballSpeedX;
+        }
+    if (ballX == playerX + paddleWidth && ballY >= playerY && ballY <= playerY+paddleHeight) {
+        ballSpeedX = -ballSpeedX;
+        }
+    if (ballX + ballSize == aiX && ballY >= aiY && ballY <= aiY+paddleHeight) {
+        ballSpeedX = -ballSpeedX;
+        }
+    }
+function table() {
+
+    ctx.fillStyle  = 'black';
+    ctx.fillRect(0, 0, cw, ch)
+
+    for (let linePosition = 10; linePosition < ch; linePosition += 15) {
+        ctx.fillStyle = "gray"
+        ctx.fillRect((cw - lineWidth)/2, linePosition, lineWidth, lineHeight)
+        }
+    }
+
+topCanvas = canvas.offsetTop;
+
+function playerPosition(e) {
+    playerY = e.clientY - topCanvas - paddleHeight / 2
+    }
+function aiPosition() {
+    const middlePaddle = aiY + paddleHeight / 2;
+    const middleBall = ballY + ballSize / 2;
+
+    if(ballX > 250) {
+        if(middlePaddle - middleBall > 100){
+            aiY -= 7.5;
+            }
+            else if(middlePaddle - middleBall > 25){
+                aiY -= 2.5;
+                    }
+                else if(middlePaddle - middleBall < -100){
+                    aiY += 7.5;
+                    }
+                else if(middlePaddle - middleBall < -25){
+                    aiY += 2.5;
+                    }
+            }
+            else if(ballX <= 250 && ballX > 75) {
+                if(middlePaddle - middleBall > 50){
+                    aiY -= 1.5;
+                    }
+                else if(middlePaddle - middleBall < -100){
+                    aiY += 1.5;
+                    }
+            }
+        }
+
+canvas.addEventListener("mousemove", playerPosition)
+
+function game() {
+    table()
+    ball()
+    player()
+    ai()
+    aiPosition()
+    }
+
+setInterval(game, 1000 / 60)
+        </script>
+    </body>
+</html>
